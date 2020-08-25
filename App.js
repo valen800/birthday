@@ -6,6 +6,7 @@ import {
   Text,
   View,
   StatusBar,
+  Button,
 } from 'react-native';
 import firebase from './src/utils/firebase';
 import 'firebase/auth';
@@ -29,13 +30,26 @@ export default function App() {
       <SafeAreaView style={styles.background}>
         {user ? (
           <View>
-            <Text>Estas logueado</Text>
+            <Logout />
           </View>
         ) : (
           <Auth />
         )}
       </SafeAreaView>
     </>
+  );
+}
+
+function Logout() {
+  const logout = () => {
+    firebase.auth().signOut();
+  };
+
+  return (
+    <View>
+      <Text>Estas Logueado</Text>
+      <Button title="Cerrar sesión" onPress={logout}></Button>
+    </View>
   );
 }
 

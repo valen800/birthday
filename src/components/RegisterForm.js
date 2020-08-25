@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, TouchableOpacity, TextInput} from 'react-native';
 
+import {validateEmail} from '../utils/validations'; //No es exportación default, se pone entre llaves y se llama a la función
+
 export default function RegisterForm(props) {
   const {changeForm} = props;
   const [formData, setFormData] = useState(defaultValue());
@@ -12,8 +14,17 @@ export default function RegisterForm(props) {
       if (!formData.email) errors.email = true;
       if (!formData.password) errors.password = true;
       if (!formData.repeatPassword) errors.repeatPassword = true;
+    } else if (!validateEmail(formData.email)) {
+      errors.email = true;
+    } else if (formData.password !== formData.repeatPassword) {
+      errors.password = true;
+      errors.repeatPassword = true;
+    } else if (formData.password.length < 8) {
+      errors.password = true;
+      errors.repeatPassword = true;
+    } else {
+      console.log('Formulario correcto');
     }
-
     setFormError(errors);
   };
 
@@ -26,7 +37,7 @@ export default function RegisterForm(props) {
         onChange={(e) => setFormData({...formData, email: e.nativeEvent.text})} //...formData para obtener el valor y actualizarlo
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, formError.password && styles.error]}
         placeholder="Contraseña"
         placeholderTextColor="#969696"
         secureTextEntry={true}
@@ -35,7 +46,7 @@ export default function RegisterForm(props) {
         }
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, formError.repeatPassword && styles.error]}
         placeholder="Repetir contraseña"
         placeholderTextColor="#969696"
         secureTextEntry={true}
